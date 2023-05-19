@@ -15,7 +15,7 @@ function App() {
     const [groupMembers, setGroupMembers] = useState<number>(100)
     const [times, setTimes] = useState<number[]>([])
 
-    const test = useCallback(
+    const runFunctions = useCallback(
         async function () {
             const times = []
 
@@ -76,8 +76,8 @@ function App() {
                     <TreeDepth value={treeDepth} onChange={setTreeDepth} />
                     <GroupMembers value={groupMembers} onChange={setGroupMembers} />
 
-                    <Button onClick={() => test()} size="sm" my="3">
-                        Test
+                    <Button onClick={() => runFunctions()} size="sm" my="3">
+                        Run functions
                     </Button>
 
                     <List spacing={3}>
