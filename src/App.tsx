@@ -28,7 +28,7 @@ function App() {
             setTimes(times)
 
             const [group, time1] = await run(() => {
-                const members = Array.from(Array(groupMembers).keys())
+                const members = Array.from(Array(groupMembers - 1).keys())
 
                 console.log(members.length)
 
@@ -74,7 +74,7 @@ function App() {
             <Flex flex="1" align="center" justify="center">
                 <Flex flexDir="column" gap={4} width="400px">
                     <TreeDepth value={treeDepth} onChange={setTreeDepth} />
-                    <GroupMembers value={groupMembers} onChange={setGroupMembers} />
+                    <GroupMembers value={groupMembers} onChange={setGroupMembers} max={2 ** treeDepth} />
 
                     <Button onClick={() => runFunctions()} size="sm" my="3">
                         Run functions
