@@ -9,14 +9,19 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@semaphore-protocol/group": "^3.1.0",
-        "@semaphore-protocol/identity": "^3.1.0",
-        "@semaphore-protocol/proof": "^3.1.0",
+        "@chakra-ui/react": "^2.6.1",
+        "@emotion/react": "^11.11.0",
+        "@emotion/styled": "^11.11.0",
+        "@semaphore-protocol/group": "^3.10.1",
+        "@semaphore-protocol/identity": "^3.10.1",
+        "@semaphore-protocol/proof": "^3.10.1",
         "buffer": "^6.0.3",
         "events": "^3.3.0",
+        "framer-motion": "^10.12.12",
         "process": "^0.11.10",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-icons": "^4.8.0",
         "util": "^0.12.5"
     },
     "devDependencies": {

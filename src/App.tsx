@@ -1,68 +1,101 @@
+import { Box, Button, Flex, List, ListIcon, ListItem, Text } from "@chakra-ui/react"
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof, generateProof as _generateProof, verifyProof as _verifyProof } from "@semaphore-protocol/proof"
+import { generateProof, verifyProof } from "@semaphore-protocol/proof"
 import { useCallback, useState } from "react"
-import "./App.css"
-import semaphoreLogo from "./assets/semaphore.svg"
+import { MdCheckCircle } from "react-icons/md"
+import GroupMembers from "./components/GroupMembers"
+import Navbar from "./components/Navbar"
+import TreeDepth from "./components/TreeDepth"
+
+const functions = ["new Identity", "new Group", "generateProof", "verifyProof"]
 
 function App() {
-    const [time, setTime] = useState<number>(0.0)
-    const [info, setInfo] = useState<string>("Click on the button to generate a Semaphore proof.")
-    const [proof, setProof] = useState<FullProof>()
+    const [treeDepth, setTreeDepth] = useState<number>(20)
+    const [groupMembers, setGroupMembers] = useState<number>(100)
+    const [times, setTimes] = useState<number[]>([])
 
-    const generateProof = useCallback(async function () {
-        const identity = new Identity()
-        const group = new Group(1)
+    const test = useCallback(
+        async function () {
+            const times = []
 
-        group.addMember(identity.commitment)
+            const [identity, time0] = await run(() => {
+                return new Identity()
+            })
 
-        setInfo("Generating proof...")
+            times.push(time0)
+
+            setTimes(times)
+
+            const [group, time1] = await run(() => {
+                const members = Array.from(Array(groupMembers).keys())
+
+                console.log(members.length)
+
+                return new Group(1, treeDepth, [...members, identity.commitment])
+            })
+
+            times.push(time1)
+
+            setTimes(times.slice())
+
+            const [proof, time2] = await run(async () => {
+                return await generateProof(identity, group, 1, 1)
+            })
+
+            times.push(time2)
+
+            setTimes(times.slice())
+
+            const [, time3] = await run(async () => {
+                return await verifyProof(proof, treeDepth)
+            })
+
+            times.push(time3)
+
+            setTimes(times.slice())
+        },
+        [treeDepth, groupMembers]
+    )
+
+    async function run(callback: () => any): Promise<[any, number]> {
         const t0 = performance.now()
 
-        const proof = await _generateProof(identity, group, 1, 1, {
-            wasmFilePath: "./semaphore.wasm",
-            zkeyFilePath: "./semaphore.zkey"
-        })
+        const result = await callback()
 
         const t1 = performance.now()
 
-        setTime((t1 - t0) / 1000)
-        setInfo("Proof generated!")
-
-        setProof(proof)
-        console.log(proof)
-    }, [])
-
-    const verifyProof = useCallback(
-        async function () {
-            if (proof) {
-                setInfo("Verifiying proof...")
-                const t0 = performance.now()
-
-                await _verifyProof(proof, 20)
-
-                const t1 = performance.now()
-
-                setTime((t1 - t0) / 1000)
-                setInfo("Proof verified!")
-            }
-        },
-        [proof]
-    )
+        return [result, t1 - t0]
+    }
 
     return (
-        <div className="App">
-            <a href="https://semaphore.appliedzkp.org" target="_blank">
-                <img src={semaphoreLogo} className="logo react" alt="React logo" />
-            </a>
-            <h1>Semaphore</h1>
-            <h3>{time} s</h3>
-            <button onClick={() => generateProof()}>Generate proof</button>
-            <br />
-            <br />
-            <button onClick={() => verifyProof()}>Verify proof</button>
-            <p className="info">{info}</p>
-        </div>
+        <Flex flexDir="column" flex="1">
+            <Navbar />
+            <Flex flex="1" align="center" justify="center">
+                <Flex flexDir="column" gap={4} width="400px">
+                    <TreeDepth value={treeDepth} onChange={setTreeDepth} />
+                    <GroupMembers value={groupMembers} onChange={setGroupMembers} />
+
+                    <Button onClick={() => test()} size="sm" my="3">
+                        Test
+                    </Button>
+
+                    <List spacing={3}>
+                        {functions.map((f, i) => (
+                            <ListItem key={i}>
+                                <Flex justify={"space-between"}>
+                                    <Box>
+                                        {times[i] && <ListIcon as={MdCheckCircle} color="green.500" />}
+                                        <b>{f}</b>
+                                    </Box>
+                                    <Text>{times[i] ? times[i] : 0} ms</Text>
+                                </Flex>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Flex>
+            </Flex>
+        </Flex>
     )
 }
 
