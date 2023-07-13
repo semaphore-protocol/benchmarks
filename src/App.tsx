@@ -13,8 +13,8 @@ const functions = [
     "new Group",
     "generateProof",
     "verifyProof",
-    "add Member to Group",
-    "update Group Member"
+    "addMember",
+    "updateMember"
 ]
 
 function App() {
@@ -34,12 +34,11 @@ function App() {
 
             setTimes(times)
 
-            const [group, time1] = await run(() => {
-                const members = Array.from(Array(groupMembers - 1).keys())
+            let members = Array.from(Array(groupMembers - 1).keys())
+            members = [...members, identity.commitment]
 
-                console.log(members.length)
-
-                return new Group(1, treeDepth, [...members, identity.commitment])
+            const [group, time1] = await run(() => {                
+                return new Group(1, treeDepth, members)
             })
 
             times.push(time1)
@@ -63,27 +62,17 @@ function App() {
             setTimes(times.slice())
 
             const [, time4] = await run(() => {
-                const member = new Identity().commitment
-
-                console.log(group.members.length)
-
-                group.addMember(member)
-
-                console.log(group.members.length)
+                group.addMember(1)
             })
+
             times.push(time4)
 
             setTimes(times.slice())
 
             const [, time5] = await run(() => {
-                const member = new Identity().commitment
-
-                console.log(group.members[0])
-
-                group.updateMember(0, member)
-
-                console.log(group.members[0])
+                group.updateMember(0, 1)
             })
+            
             times.push(time5)
 
             setTimes(times.slice())
