@@ -40,7 +40,7 @@ jobs:
               if: success()
               uses: crazy-max/ghaction-github-pages@v3
               with:
-                  fqdn: benchmarks.semaphore.appliedzkp.org
+                  fqdn: benchmarks.semaphore.pse.dev
                   build_dir: dist
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
