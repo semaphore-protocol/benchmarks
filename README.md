@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This Semaphore Benchmarks application was moved to the [Semaphore Extensions repo](https://github.com/semaphore-protocol/extensions) inside the `apps` folder. You can find it [here](https://github.com/semaphore-protocol/extensions/tree/main/apps/benchmarks).
+
 <h1 align="center">
     Semaphore Benchmarks
 </h1>
